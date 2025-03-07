@@ -1,0 +1,23 @@
+meta {
+  name: create
+  type: http
+  seq: 3
+}
+
+post {
+  url: https://api.escuelajs.co/api/v1/products/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "title": "New Product",
+      "price": 10,
+      "description": "A description",
+      "categoryId": 1,
+      "images": [
+          "https://placeimg.com/640/480/any"
+      ]
+  }
+}

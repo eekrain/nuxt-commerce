@@ -1,0 +1,21 @@
+meta {
+  name: update
+  type: http
+  seq: 4
+}
+
+put {
+  url: https://api.escuelajs.co/api/v1/products/1
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "title": "Change title",
+      "price": 100,
+      "images": [
+          "https://placeimg.com/640/480/any"
+      ]
+  }
+}

@@ -1,0 +1,16 @@
+meta {
+  name: pagination
+  type: http
+  seq: 5
+}
+
+get {
+  url: https://api.escuelajs.co/api/v1/products/?offset=0&limit=10
+  body: none
+  auth: none
+}
+
+params:query {
+  offset: 0
+  limit: 10
+}

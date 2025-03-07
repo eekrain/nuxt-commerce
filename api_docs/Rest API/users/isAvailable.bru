@@ -1,0 +1,17 @@
+meta {
+  name: isAvailable
+  type: http
+  seq: 5
+}
+
+post {
+  url: https://api.escuelajs.co/api/v1/users/is-available
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+  	"email": "maria@mail.com"
+  }
+}
