@@ -1,7 +1,9 @@
 <script setup lang="ts">
+definePageMeta({
+  layout: "auth",
+});
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -9,54 +11,77 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useForm } from "vee-validate";
+import { toTypedSchema } from "@vee-validate/zod";
+import { loginSchema } from "~/lib/schema";
+import { useAuth } from "~/composables/useAuth";
+
+const formSchema = toTypedSchema(loginSchema);
+
+const form = useForm({
+  validationSchema: formSchema,
+  initialValues: {
+    email: "admin@mail.com",
+    password: "",
+  },
+});
+
+const { login } = useAuth();
+
+const onSubmit = form.handleSubmit(async (values) => {
+  console.log("Form submitted!", values);
+
+  try {
+    await login(values.email, values.password);
+    navigateTo("/dashboard"); // Redirect after login
+  } catch (error) {
+    console.error("Login failed", error);
+  }
+});
 </script>
 
 <template>
-  <div class="w-full min-h-screen lg:grid lg:grid-cols-2 bg-muted">
-    <div class="flex items-center justify-center py-12 px-4">
-      <Card class="w-[400px]">
-        <CardHeader class="text-center">
-          <CardTitle class="text-3xl">Login</CardTitle>
-          <CardDescription class="text-balance text-muted-foreground">
-            Enter your email below to login to your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form>
-            <div class="grid items-center w-full gap-4">
-              <div class="grid gap-2">
-                <Label for="email">Email</Label>
+  <Card class="w-[400px]">
+    <CardHeader class="text-center">
+      <CardTitle class="text-3xl">Login</CardTitle>
+      <CardDescription class="text-balance text-muted-foreground">
+        Enter your email below to login to your account
+      </CardDescription>
+    </CardHeader>
+    <CardContent>
+      <form @submit="onSubmit">
+        <div class="grid items-center w-full gap-4">
+          <FormField v-slot="{ componentField }" name="email">
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
                 <Input
-                  id="email"
                   type="email"
-                  placeholder="m@example.com"
-                  required
+                  placeholder="admin@mail.com"
+                  v-bind="componentField"
                 />
-              </div>
-              <div class="grid gap-2">
-                <Label for="password">Password</Label>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+
+          <FormField v-slot="{ componentField }" name="password">
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
                 <Input
-                  id="password"
                   type="password"
                   placeholder="********"
-                  required
+                  v-bind="componentField"
                 />
-              </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
 
-              <Button type="submit" class="w-full mt-4"> Login </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
-    <div class="hidden lg:block">
-      <img
-        src="/login-illustration.svg"
-        alt="Image"
-        width="1920"
-        height="1080"
-        class="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-      />
-    </div>
-  </div>
+          <Button type="submit" class="w-full mt-4">Login</Button>
+        </div>
+      </form>
+    </CardContent>
+  </Card>
 </template>
