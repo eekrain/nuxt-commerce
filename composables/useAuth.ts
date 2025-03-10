@@ -21,7 +21,6 @@ export const useAuth = () => {
   const refreshToken = useCookie("refresh_token");
   const user = useState<User | null>("user", () => null);
 
-  // Login function
   const login = async (email: string, password: string) => {
     const { data, error } = await useFetch<LoginResponse>(`${API_URL}/login`, {
       method: "POST",
