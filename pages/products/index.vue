@@ -1,5 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ middleware: "auth" });
+definePageMeta({ middleware: "protected" });
 
 import {
   Breadcrumb,
@@ -13,7 +13,18 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronLeft, ChevronRight } from "lucide-vue-next";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  Plus,
+  Edit,
+  Trash2,
+} from "lucide-vue-next";
+import ProductCard from "~/components/ProductCard.vue";
+import { toast } from "vue-sonner";
+
+const { categories, fetchCategories } = useCategories();
 
 const {
   products,
@@ -22,13 +33,11 @@ const {
   currentPage,
   hasMore,
   fetchProducts,
-  fetchCategories,
   updateFilters,
   clearFilters,
-  categories,
 } = useProducts();
 
-// Filter form state
+// Filter state
 const searchTitle = ref("");
 const minPrice = ref("");
 const maxPrice = ref("");
@@ -65,6 +74,22 @@ async function resetFilters() {
   await clearFilters();
 }
 
+const deleteProduct = async (productId: number) => {
+  try {
+    const res = await $fetch(
+      `https://api.escuelajs.co/api/v1/products/${productId}`,
+      {
+        method: "DELETE",
+      }
+    );
+    toast.success("Product deleted successfully");
+    await fetchProducts(1);
+  } catch (error) {
+    console.error("Error deleting product", error);
+    toast.error("Failed to delete product");
+  }
+};
+
 // Initial fetch
 onMounted(() => {
   fetchProducts(1);
@@ -94,71 +119,79 @@ onMounted(() => {
   <div class="p-6">
     <div class="flex items-center justify-between">
       <h1 class="text-2xl font-semibold">Products</h1>
+
+      <NuxtLink to="/products/new">
+        <Button>
+          <Plus />
+          <span>New Product</span>
+        </Button>
+      </NuxtLink>
     </div>
 
     <!-- Filter Section -->
-    <div class="flex justify-center mb-6">
-      <Card class="max-w-lg">
-        <CardContent class="pt-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="space-y-2">
-              <label class="text-sm font-medium">Search by Title</label>
-              <Input
-                v-model="searchTitle"
-                placeholder="Search products..."
-                @keyup.enter="applyFilters"
-              />
-            </div>
-
-            <div class="space-y-2">
-              <label class="text-sm font-medium">Category</label>
-              <Select v-model="categoryId">
-                <SelectTrigger>
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Categories</SelectLabel>
-                    <SelectItem
-                      v-for="category in categories"
-                      :key="category.id"
-                      :value="category.id"
-                      >{{ category.name }}</SelectItem
-                    >
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div class="space-y-2">
-              <label class="text-sm font-medium">Min Price</label>
-              <Input
-                v-model="minPrice"
-                type="number"
-                placeholder="Min price"
-                @keyup.enter="applyFilters"
-              />
-            </div>
-
-            <div class="space-y-2">
-              <label class="text-sm font-medium">Max Price</label>
-              <Input
-                v-model="maxPrice"
-                type="number"
-                placeholder="Max price"
-                @keyup.enter="applyFilters"
-              />
-            </div>
+    <Card class="max-w-lg my-6">
+      <CardContent class="pt-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label class="text-sm font-medium">Search by Title</label>
+            <Input
+              v-model="searchTitle"
+              placeholder="Search products..."
+              @keyup.enter="applyFilters"
+            />
           </div>
-        </CardContent>
 
-        <CardFooter class="gap-4">
-          <Button variant="outline" @click="resetFilters">Reset</Button>
+          <div class="space-y-2">
+            <label class="text-sm font-medium">Category</label>
+            <Select v-model="categoryId">
+              <SelectTrigger>
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Categories</SelectLabel>
+                  <SelectItem
+                    v-for="category in categories"
+                    :key="category.id"
+                    :value="category.id"
+                    >{{ category.name }}</SelectItem
+                  >
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
 
-          <Button @click="applyFilters">Start Filtering</Button>
-        </CardFooter>
-      </Card>
-    </div>
+          <div class="space-y-2">
+            <label class="text-sm font-medium">Min Price</label>
+            <Input
+              v-model="minPrice"
+              type="number"
+              placeholder="Min price"
+              @keyup.enter="applyFilters"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-sm font-medium">Max Price</label>
+            <Input
+              v-model="maxPrice"
+              type="number"
+              placeholder="Max price"
+              @keyup.enter="applyFilters"
+            />
+          </div>
+        </div>
+      </CardContent>
+
+      <CardFooter class="gap-4">
+        <Button variant="outline" @click="resetFilters">Reset</Button>
+
+        <Button @click="applyFilters">
+          <Search />
+          <span> Start Filtering </span>
+        </Button>
+      </CardFooter>
+    </Card>
 
     <div
       v-if="isLoading"
@@ -187,38 +220,12 @@ onMounted(() => {
       v-else
       class="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
     >
-      <div
-        class="overflow-hidden rounded-xl border bg-card text-card-foreground shadow"
-        v-for="item in products"
-        :key="item.id"
-      >
-        <img
-          :src="`https://picsum.photos/2000/800?random=${item.id}`"
-          :alt="item.title"
-          class="h-[200px] object-cover"
-        />
-        <div class="p-6 pt-4">
-          <NuxtLink :to="`/product/edit/${item.id}`">
-            <h3
-              class="mb-3 text-2xl font-semibold underline-offset-2 hover:underline"
-            >
-              {{ item.title }}
-            </h3>
-          </NuxtLink>
-
-          <table class="md:text-base">
-            <tbody>
-              <tr>
-                <td>Price</td>
-                <td class="px-3">:</td>
-                <td class="font-semibold text-emerald-600">
-                  ${{ item.price }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <ProductCard
+        v-for="product in products"
+        :key="product.id"
+        :product="product"
+        :deleteProduct="deleteProduct"
+      />
     </div>
 
     <div class="flex justify-center items-center gap-2 mt-8">

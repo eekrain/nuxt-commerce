@@ -11,6 +11,24 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { toast } from "vue-sonner";
+
+import ProductForm from "~/components/ProductForm.vue";
+import type { TProductForm } from "~/lib/schema";
+
+const onSubmit = async (values: TProductForm) => {
+  try {
+    const res = await $fetch("https://api.escuelajs.co/api/v1/products/", {
+      method: "POST",
+      body: { ...values, images: ["https://placeimg.com/640/480/any"] },
+    });
+    toast.success("Product created successfully");
+    navigateTo("/products");
+  } catch (error) {
+    console.error("Error creating product", error);
+    toast.error("Failed to create product");
+  }
+};
 </script>
 
 <template>
@@ -25,7 +43,11 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
           </BreadcrumbItem>
           <BreadcrumbSeparator class="hidden md:block" />
           <BreadcrumbItem>
-            <BreadcrumbPage>Dashboard</BreadcrumbPage>
+            <BreadcrumbPage>Product</BreadcrumbPage>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator class="hidden md:block" />
+          <BreadcrumbItem>
+            <BreadcrumbPage>New Product</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -33,14 +55,6 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
   </header>
 
   <div class="p-6">
-    <h1 class="text-2xl font-semibold">Dashboard</h1>
-
-    <div class="flex flex-1 flex-col gap-4 mt-4">
-      <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-        <div class="aspect-video rounded-xl bg-muted/50" />
-        <div class="aspect-video rounded-xl bg-muted/50" />
-        <div class="aspect-video rounded-xl bg-muted/50" />
-      </div>
-    </div>
+    <ProductForm title="Create New Product" @submit="onSubmit" mode="create" />
   </div>
 </template>

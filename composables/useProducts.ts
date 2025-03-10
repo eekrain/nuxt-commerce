@@ -9,7 +9,6 @@ interface ProductFilters {
 
 export const useProducts = () => {
   const products = ref<Product[]>([]);
-  const categories = ref<Category[]>([]);
 
   const isLoading = ref(false);
   const error = ref<string | null>(null);
@@ -61,18 +60,6 @@ export const useProducts = () => {
     }
   };
 
-  const fetchCategories = async () => {
-    try {
-      const response = await $fetch<Category[]>(
-        "https://api.escuelajs.co/api/v1/categories"
-      );
-      categories.value = response;
-    } catch (err) {
-      error.value = "Failed to fetch categories";
-      console.error("Error fetching categories:", err);
-    }
-  };
-
   const updateFilters = async (newFilters: Partial<ProductFilters>) => {
     filters.value = { ...filters.value, ...newFilters };
     await fetchProducts(1);
@@ -85,7 +72,6 @@ export const useProducts = () => {
 
   return {
     products,
-    categories,
     isLoading,
     error,
     currentPage,
@@ -93,7 +79,6 @@ export const useProducts = () => {
     hasMore,
     filters,
     fetchProducts,
-    fetchCategories,
     updateFilters,
     clearFilters,
   };
