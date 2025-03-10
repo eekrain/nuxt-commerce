@@ -54,5 +54,5 @@ export const useAuth = () => {
     user.value = null;
   };
 
-  return { user, login, fetchUser, logout };
+  return { accessToken, user, login, fetchUser, logout };
 };

@@ -22,18 +22,16 @@ const form = useForm({
   validationSchema: formSchema,
   initialValues: {
     email: "admin@mail.com",
-    password: "",
+    password: "admin123",
   },
 });
 
 const { login } = useAuth();
 
 const onSubmit = form.handleSubmit(async (values) => {
-  console.log("Form submitted!", values);
-
   try {
     await login(values.email, values.password);
-    navigateTo("/dashboard"); // Redirect after login
+    navigateTo("/");
   } catch (error) {
     console.error("Login failed", error);
   }
@@ -69,11 +67,7 @@ const onSubmit = form.handleSubmit(async (values) => {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
-                  placeholder="********"
-                  v-bind="componentField"
-                />
+                <Input type="password" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
