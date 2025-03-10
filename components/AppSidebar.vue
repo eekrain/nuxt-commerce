@@ -50,8 +50,8 @@ const data = {
     <SidebarHeader>
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarMenuButton size="lg" as-child>
-            <h1 class="font-semibold text-2xl">EKA Shop</h1>
+          <SidebarMenuButton size="lg">
+            <h1 class="font-semibold text-xl">EKA Shop</h1>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

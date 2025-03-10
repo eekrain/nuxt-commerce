@@ -222,9 +222,7 @@ onMounted(() => {
           Cancel
         </Button>
 
-        <Button type="submit">
-          {{ props.mode === "edit" ? "Update Product" : "Create Product" }}
-        </Button>
+        <Button type="submit">Save Product</Button>
       </div>
     </div>
   </form>

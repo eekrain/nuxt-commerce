@@ -34,11 +34,11 @@ const onSubmit = async (values: TProductForm) => {
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem class="hidden md:block">
-            <BreadcrumbLink href="#"> Admin </BreadcrumbLink>
+            <BreadcrumbPage>Admin</BreadcrumbPage>
           </BreadcrumbItem>
           <BreadcrumbSeparator class="hidden md:block" />
           <BreadcrumbItem>
-            <BreadcrumbPage>Product</BreadcrumbPage>
+            <BreadcrumbLink href="/products">Products</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator class="hidden md:block" />
           <BreadcrumbItem>

@@ -8,10 +8,14 @@ export const loginSchema = z.object({
 });
 
 export const productSchema = z.object({
-  title: z.string().min(3, { message: "Title must be at least 3 characters" }),
-  price: z.number().min(1, { message: "Price must be at least $1" }),
+  title: z
+    .string({ message: "Title must be at least 3 characters" })
+    .min(3, { message: "Title must be at least 3 characters" }),
+  price: z
+    .number({ message: "Price must be at least $1" })
+    .min(1, { message: "Price must be at least $1" }),
   description: z
-    .string()
+    .string({ message: "Description must be at least 3 characters" })
     .min(3, { message: "Description must be at least 3 characters" }),
   categoryId: z
     .number({ message: "Category must be selected" })

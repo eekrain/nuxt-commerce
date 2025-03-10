@@ -4,7 +4,6 @@ definePageMeta({ middleware: "protected" });
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
@@ -13,16 +12,8 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Search,
-  Plus,
-  Edit,
-  Trash2,
-} from "lucide-vue-next";
+import { ChevronLeft, ChevronRight, Search, Plus } from "lucide-vue-next";
 import ProductCard from "~/components/ProductCard.vue";
-import { toast } from "vue-sonner";
 
 const { categories, fetchCategories } = useCategories();
 
@@ -90,7 +81,7 @@ onMounted(() => {
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem class="hidden md:block">
-            <BreadcrumbLink href="#"> Admin </BreadcrumbLink>
+            <BreadcrumbPage>Admin</BreadcrumbPage>
           </BreadcrumbItem>
           <BreadcrumbSeparator class="hidden md:block" />
           <BreadcrumbItem>
