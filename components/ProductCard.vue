@@ -24,7 +24,7 @@ const onDelete = async () => {
     :key="product.id"
   >
     <img
-      :src="`https://picsum.photos/2000/800?random=${product.id}`"
+      :src="product.images[0]"
       :alt="product.title"
       class="h-[200px] object-cover"
     />

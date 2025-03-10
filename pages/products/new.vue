@@ -17,10 +17,11 @@ import ProductForm from "~/components/ProductForm.vue";
 import type { TProductForm } from "~/lib/schema";
 
 const onSubmit = async (values: TProductForm) => {
+  console.log("🚀 ~ onSubmit ~ values:", values);
   try {
     const res = await $fetch("https://api.escuelajs.co/api/v1/products/", {
       method: "POST",
-      body: { ...values, images: ["https://placeimg.com/640/480/any"] },
+      body: values,
     });
     toast.success("Product created successfully");
     navigateTo("/products");

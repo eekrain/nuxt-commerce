@@ -1,3 +1,4 @@
+import { toast } from "vue-sonner";
 import { type Category, type Product } from "~/lib/types";
 
 interface ProductFilters {
@@ -70,6 +71,22 @@ export const useProducts = () => {
     await fetchProducts(1);
   };
 
+  const deleteProduct = async (productId: number) => {
+    try {
+      const res = await $fetch(
+        `https://api.escuelajs.co/api/v1/products/${productId}`,
+        {
+          method: "DELETE",
+        }
+      );
+      toast.success("Product deleted successfully");
+      await fetchProducts(1);
+    } catch (error) {
+      console.error("Error deleting product", error);
+      toast.error("Failed to delete product");
+    }
+  };
+
   return {
     products,
     isLoading,
@@ -81,5 +98,6 @@ export const useProducts = () => {
     fetchProducts,
     updateFilters,
     clearFilters,
+    deleteProduct,
   };
 };

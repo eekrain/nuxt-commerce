@@ -15,7 +15,7 @@ const onSubmit = async (values: TProductForm) => {
   try {
     const res = await $fetch(`https://api.escuelajs.co/api/v1/products/${id}`, {
       method: "PUT",
-      body: { ...values, images: ["https://placeimg.com/640/480/any"] },
+      body: values,
     });
     toast.success("Product updated successfully");
     navigateTo("/products");
@@ -59,6 +59,7 @@ const onSubmit = async (values: TProductForm) => {
         description: data.description,
         price: data.price,
         title: data.title,
+        images: data.images,
       }"
       mode="edit"
     />

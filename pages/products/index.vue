@@ -35,6 +35,7 @@ const {
   fetchProducts,
   updateFilters,
   clearFilters,
+  deleteProduct,
 } = useProducts();
 
 // Filter state
@@ -73,22 +74,6 @@ async function resetFilters() {
   categoryId.value = "";
   await clearFilters();
 }
-
-const deleteProduct = async (productId: number) => {
-  try {
-    const res = await $fetch(
-      `https://api.escuelajs.co/api/v1/products/${productId}`,
-      {
-        method: "DELETE",
-      }
-    );
-    toast.success("Product deleted successfully");
-    await fetchProducts(1);
-  } catch (error) {
-    console.error("Error deleting product", error);
-    toast.error("Failed to delete product");
-  }
-};
 
 // Initial fetch
 onMounted(() => {

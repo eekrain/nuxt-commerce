@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { X, Loader } from "lucide-vue-next";
 
 const API_URL = "https://api.escuelajs.co/api/v1";
 
@@ -28,6 +29,22 @@ const updateOpen = ref(false);
 const formValues = ref<TProductForm | null>(null);
 const uploadingImage = ref(false);
 const imageUrls = ref<string[]>([]);
+
+const formSchema = toTypedSchema(productSchema);
+
+const form = useForm({
+  validationSchema: formSchema,
+  initialValues: props.initialData
+    ? props.initialData
+    : {
+        images: [],
+      },
+});
+
+const removeImage = (index: number) => {
+  imageUrls.value.splice(index, 1);
+  form.setFieldValue("images", imageUrls.value);
+};
 
 const handleImageUpload = async (event: Event) => {
   const input = event.target as HTMLInputElement;
@@ -48,25 +65,13 @@ const handleImageUpload = async (event: Event) => {
 
     const data = await response.json();
     imageUrls.value.push(data.location);
-    form.setFieldValue("image", imageUrls.value);
+    form.setFieldValue("images", imageUrls.value);
   } catch (error) {
     console.error("Error uploading image:", error);
   } finally {
     uploadingImage.value = false;
   }
 };
-
-const removeImage = (index: number) => {
-  imageUrls.value.splice(index, 1);
-  form.setFieldValue("image", imageUrls.value);
-};
-
-const formSchema = toTypedSchema(productSchema);
-
-const form = useForm({
-  validationSchema: formSchema,
-  initialValues: props.initialData,
-});
 
 const onSubmit = form.handleSubmit(async (values) => {
   if (props.mode === "edit") {
@@ -87,8 +92,8 @@ const confirmUpdate = async () => {
 
 onMounted(() => {
   fetchCategories();
-  if (props.initialData?.image) {
-    imageUrls.value = [...props.initialData.image];
+  if (props.initialData?.images) {
+    imageUrls.value = [...props.initialData.images];
   }
 });
 </script>
@@ -171,17 +176,18 @@ onMounted(() => {
           <FormLabel>Images</FormLabel>
           <FormControl>
             <div class="space-y-4">
-              <div class="grid grid-cols-4 gap-4">
+              <div class="flex gap-4">
                 <div
-                  v-for="(url, index) in imageUrls"
+                  v-for="(url, index) in form.values.images"
                   :key="index"
-                  class="relative aspect-square"
+                  class="relative rounded-lg overflow-hidden"
                 >
                   <img
                     :src="url"
                     alt="Product image"
-                    class="w-[150px] h-[150px] object-cover rounded-lg bg-yellow-100"
+                    class="size-[150px] object-cover bg-yellow-100"
                   />
+
                   <Button
                     type="button"
                     variant="destructive"
@@ -189,7 +195,7 @@ onMounted(() => {
                     class="absolute top-1 right-1 h-6 w-6"
                     @click="removeImage(index)"
                   >
-                    <i class="i-lucide-x h-4 w-4" />
+                    <X />
                   </Button>
                 </div>
               </div>
@@ -201,8 +207,8 @@ onMounted(() => {
                   @change="handleImageUpload"
                   :disabled="uploadingImage"
                 />
-                <div v-if="uploadingImage" class="animate-spin h-4 w-4">
-                  <i class="i-lucide-loader-2" />
+                <div v-if="uploadingImage" class="animate-spin">
+                  <Loader />
                 </div>
               </div>
             </div>

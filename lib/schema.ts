@@ -16,6 +16,6 @@ export const productSchema = z.object({
   categoryId: z
     .number({ message: "Category must be selected" })
     .min(1, { message: "Category must be selected" }),
-  image: z.array(z.string()),
+  images: z.array(z.string()),
 });
 export type TProductForm = z.infer<typeof productSchema>;
